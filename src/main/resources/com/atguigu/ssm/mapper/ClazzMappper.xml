@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.ssm.mapper.ClazzMapper">
+<!--    List<clazz> getAll();-->
+   
+<select id="getAll" resultType="clazz">
+    select s_student.name,s_student.hours,s_school.schoolname
+    from s_school,s_student where s_school.id=s_student.sid;
+</select>
+</mapper>

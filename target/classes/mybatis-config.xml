@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--    引入properties文件，此后就可以在当前文件中使用的方式来访问value-->
+    <!--    意义：解除耦合，这样只需要修改jdbc.properties就行了-->
+
+    <!--
+    <typeAliases></typeAliases>
+        类型别名：设置类型别名，即为某个具体的类设置一个别名，在NyBatis范围中，就可以使用别名来表示一个具体的类型
+        MyBatis核心配置文件中的标签必须要按照指定的顺序配置properties?,settings?,typeAliases?,
+        typeHandlers?,objectFactory?,objectWrapperFactory?,reflectorFactory?,plugins?
+        ,environments?,databaseIdProvider?,mappers?
+        type：需要起别名的类型
+        alias：设置的别名
+        只设置type就会有一个默认的别名，就是类名且不区分大小写
+    -->
+
+    <settings>
+        <!--        将下划线映射为驼峰
+emp_id:empId,emp_name:empName
+-->
+
+        <!--        将下划线映射为驼峰
+emp_id:empId,emp_name:empName
+-->
+        <!--        将下划线映射为驼峰
+emp_id:empId,emp_name:empName
+-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!--        开启延迟加载-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--        开启按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+    <!--    如下只需用a就可以表示这个类型-->
+    <!--    <typeAliases>-->
+    <!--        <typeAlias type="com.atguigu.mybatis.pojo.User" alias="a"></typeAlias>-->
+    <!--    </typeAliases>-->
+
+    <!--    配置连接数据库的环境-->
+    <!--
+    environments:配置连接数据库的环境
+    属性：
+    default：
+    设置默认使用的环境的id
+    -->
+<plugins>
+<!--    配置分页插件-->
+    <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+</plugins>
+
+</configuration>

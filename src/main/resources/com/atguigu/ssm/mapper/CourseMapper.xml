@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.ssm.mapper.CourseMapper">
+    <sql id="courseColumns">
+        id,name,hours,sid
+    </sql>
+<!--List<c_course> CheckCourseById(c_course course);-->
+<!--    <select id="CheckCourseById" resultType="c_course">-->
+<!--        select <include refid="courseColumns"></include>-->
+<!--        from s_student where id=#{cid};-->
+<!--    </select>-->
+    <select id="CheckCourseById" resultType="c_course">
+        select *
+        from s_student
+        <where>
+            <choose>
+                <when test="id!=null and id!=''">
+                    id = #{id}
+                </when>
+                <when test="name!= null and name!=''">
+                    name =#{name}
+                </when>
+                <when test="hours!=null and hours!=''">
+                    hours=#{hours}
+                </when>
+                <when test="sid!=null and sid!=''">
+                    sid=#{school}
+                </when>
+            </choose>
+        </where>
+        ;
+    </select>
+<!--void ChangeById(Integer id,Integer number);-->
+    <update id="ChangeById">
+        update s_student
+        set hours =#{number}
+        where id=#{id};
+    </update>
+
+<!--void InsertNew(@Param("id") Integer id,@Param("name") String name,@Param("hours") Integer hours,@Param("school") String school);-->
+<insert id="InsertNew">
+    insert into s_student
+    values(#{id},#{name},#{hours},#{school});
+</insert>
+<!--    List<c_course> showAll();-->
+    <resultMap id="a" type="c_course">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="hours" property="hours"></result>
+        <result column="sid" property="school"></result>
+        <result column="pid" property="pid"></result>
+        <association property="schools" javaType="s_school">
+            <id column="id" property="sid"></id>
+            <result column="schoolname" property="schoolName"></result>
+        </association>
+    </resultMap>
+    <select id="showAll" resultMap="a">
+        select s_school.id as sid,s_school.schoolname,s_student.*
+        from  s_student left join s_school
+                                on s_school.id=s_student.sid
+        ;
+    </select>
+<!--     List<c_course> getAllCourse();-->
+    <select id="getAllCourse" resultType="c_course">
+        select *
+        from s_student;
+    </select>
+<!--    void Insert(@Param("name")String name,@Param("hours")Integer hours,@Param("schoolName")String schoolName);-->
+    <insert id="Insert">
+        INSERT IGNORE INTO s_school(id,schoolname)
+        SELECT null,#{schoolName} FROM dual
+        WHERE NOT EXISTS
+        (SELECT id,schoolname FROM s_school WHERE schoolname = #{schoolName});
+    </insert>
+    
+<!--    List<c_course> getCourseByName(@Param("name")String name);-->
+   <select id="getCourseByName" resultMap="a">
+       select s_school.id as sid,s_school.schoolname,s_student.*
+       from s_school left join s_student
+                               on s_school.id=s_student.sid
+where s_student.name=#{name}
+       ;
+   </select>
+<!--     Integer getIdByName(@Param("name") String name);-->
+    <select id="getIdByName" resultType="java.lang.Integer">
+        select id
+        from s_school where schoolname=#{name};
+    </select>
+<!--      //插入课程
+    void InsertCourse(@Param("name")String name, @Param("hours")Integer hours,@Param("sid")Integer sid ,@Param("pid")Integer pid);-->
+    <insert id="InsertCourse">
+        INSERT IGNORE INTO s_student
+        SELECT null,#{name},#{hours},#{sid},#{pid} FROM dual
+        WHERE NOT EXISTS
+            (SELECT name FROM s_student WHERE name = #{name});
+    </insert>
+<!--        //依照名称删除
+   void deleteByName(@Param("name")String name);-->
+    <delete id="deleteByName">
+        delete
+        from s_student
+        where name=#{name};
+    </delete>
+<!--        //根据id查询院系
+    String CheckDeptById(@Param("id") Integer id);-->
+    <select id="CheckDeptById" resultType="java.lang.String">
+        select schoolname
+        from s_school where id=#{id};
+    </select>
+<!--        //根据名称查找院系id
+    String checkDeptByName(@Param("schoolName")String schoolName);-->
+    <select id="checkDeptByName" resultType="java.lang.String">
+        select id
+        from s_school where schoolname=#{schoolName};
+    </select>
+<!--    //根据id更新课程
+    void updateById(@Param("id") Integer id,@Param("name")String name, @Param("hours")Integer hours,@Param("sid")Integer sid);-->
+    <update id="updateById">
+        update s_student
+        set  name=#{name},hours=#{hours},sid=#{sid}
+        where id=#{id};
+    </update>
+<!--        //插入新院系
+    void InsertNewDept(@Param("newDept") String newDept);-->
+    <insert id="InsertNewDept">
+        insert into s_school
+        values (null,#{newDept});
+    </insert>
+<!--    //查询Id
+    c_course getCourseById(@Param("id")Integer id);-->
+    <select id="getCourseById" resultMap="a">
+        select s_school.id as sid,s_school.schoolname,s_student.*
+        from s_school left join s_student
+                                on s_school.id=s_student.sid
+        where s_student.id=#{id}
+        ;
+    </select>
+<!--//删除院系ById
+    void deleteDeptById(@Param("id") Integer id);-->
+    <delete id="deleteDeptById">
+        delete
+        from s_school
+        where id=#{id};
+    </delete>
+<!--    //更新图片路径
+    void updatePicById(@Param("id") Integer id, @Param("pid") String pid);-->
+    <update id="updatePicById">
+        update s_student
+        set  pid=#{pid}
+        where id=#{id};
+    </update>
+<!--        //得到所有院系
+    List<s_school> getAllSchool();-->
+    <resultMap id="b" type="s_school">
+        <id column="sid" property="id"></id>
+        <result column="name" property="schoolname"></result>
+    </resultMap>
+    <select id="getAllSchool" resultMap="b">
+        select *
+        from s_school;
+    </select>
+<!--    //按照账号查找用户
+    user getUserByName(@Param("username") String username);-->
+    <select id="getUserByName" resultType="user">
+        select *
+        from user where username=#{username};
+    </select>
+<!--    //获得所有用户名
+    List<String> getAllUser();-->
+    <select id="getAllUser" resultType="java.lang.String">
+        select username
+        from user;
+    </select>
+<!--    //注册新用户
+    void InsertNewUser(@Param("username") String username,@Param("password")  String password);-->
+    <insert id="InsertNewUser">
+        insert into user
+        values (#{username},#{password});
+    </insert>
+</mapper>

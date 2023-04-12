@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>更新课程</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<p>
+    欢迎用户：<span th:text="${loginUser}"></span>
+    <span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+<form th:action="@{'/course/'+${course.id}}" method="post" id="update_form" enctype="multipart/form-data">
+<!--  +'/'+${courseName}+'/'+${courseHours}+'/'+${courseSchool}-->
+  <input type="hidden" name="_method" value="put">
+  <input type="hidden" name="id" th:value="${course.id}">
+
+  <table>
+    <tr>
+      <th colspan="2">
+    修改课程
+      </th>
+    </tr>
+    <tr>
+      <td>课程名称</td>
+      <td>
+        <input type="text" name="name" th:value="${course.name}" id="name"><span id="name_err" class="text_error" style="display:none">该课程已经存在，请重新填写！</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td>课时</td>
+      <td>
+        <input type="text" name="hours" th:value="${course.hours}" id="hourName"><span id="hour_err" class="text_error" style="display:none">课时格式错误，请重新填写！</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td>学院</td>
+      <td>
+        <input type="text" name="school" th:value="${course.schools.schoolName}" id="deptName"><span id="school_err" class="text_error" style="display:none">学院格式错误，请以'学院'结尾！</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td>学院</td>
+      <td>
+<!--        <img th:src="@{'../photo/'+${course.pid}}" style="width:100px; height: 100px;" id="image-preview" src=""/><br>-->
+        <img id="preview" th:src="@{'../photo/'+${course.pid}}" alt="预览图片" style="max-width: 100px; max-height: 100px;"><br>
+        <input type="file" name="photo" onchange="previewImage(event)">
+        <script>
+          function previewImage(event) {
+            var preview = document.getElementById('preview');
+            preview.src= URL.createObjectURL(event.target.files[0]);
+          }
+        </script>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+        <input type="submit" value="更新">
+      </td>
+    </tr>
+
+    </input>
+<!--    课程列表（隐藏）-->
+    <input th:value="${list}" type="hidden" name="list" id="list">
+<!--    院系列表（隐藏）-->
+    <input th:value="${depts}" type="hidden" name="list" id="depts">
+  </table>
+</form>
+<script>
+  var list=document.getElementById("list").value;
+  var depts=document.getElementById("depts").value;
+  var OriginalDept=document.getElementById("deptName").value;
+  /////////////////////////////////////////////////
+  //获取用户名的输入框
+  var InputName=document.getElementById("name");
+  //绑定onblur事件：失去焦点
+  InputName.onblur=checkName;
+  //调用函数
+  function checkName(){
+    var name =document.getElementById("name").value;
+    var flag=list.includes(name);
+
+var flag1;
+// if (flag==-1){
+//   flag=1;
+// }
+// else {flag=0}
+    if(flag==0){
+      document.getElementById("name_err").style.display='none';
+      flag1=true;
+    }
+    else{
+      document.getElementById("name_err").style.display='';
+      flag1=false;
+    }
+    if(name==''){
+      alert("课程名称不能为空！")
+      document.getElementById("name_err").style.display='none'
+    }
+    return flag1;
+  }
+  /////////////////////////////////////////////////
+  //获取用户名的输入框
+  var hourNameInput=document.getElementById("hourName");
+  //绑定onblur事件：失去焦点
+  hourNameInput.onblur=checkhourName;
+  function checkhourName(){
+
+    //获取输入的用户名
+    var hourName=hourNameInput.value.trim();
+    //判断用户名是否符合规则
+    //  var reg = /[\u4e00-\u9fff]+"学院"/g;
+    var reg = /^\d{1,2}$/;
+    // \u4e00-\u9fa5
+    var flag=reg.test(hourName);
+
+    if(flag){
+      document.getElementById("hour_err").style.display='none'
+    }
+    else{
+      document.getElementById("hour_err").style.display=''
+    }
+    return flag;
+  }
+//////////////////////////////////////////
+  var InputDept=document.getElementById("deptName");
+  //绑定onblur事件：失去焦点
+  InputDept.onblur=checkDeptName;
+  function checkDeptName() {
+    //获取输入的用户名
+    var deptName=InputDept.value.trim();
+    var flag;
+    if(!depts.includes(deptName)){
+      if(confirm("院系列表中没有'"+deptName+"'院系，需要新增院系吗？")){
+      }
+      else {
+document.getElementById("deptName").value='';
+      }
+    }
+    var reg = /^[\u4E00-\u9FA5]*学院$/;
+    var flag1=reg.test(deptName);
+    if(flag1){
+      document.getElementById("school_err").style.display='none'
+    }
+    else {
+      document.getElementById("school_err").style.display=''
+    }
+    return flag1;
+ }
+  var regForm=document.getElementById("update_form");
+  regForm.onsubmit=function(){
+
+    var flag= checkName()&&checkhourName()&&checkDeptName();
+if(flag==false){
+  alert("输入的数据有误，请检查数据！")
+}
+    return flag;
+  }
+</script>
+
+</body>
+</html>

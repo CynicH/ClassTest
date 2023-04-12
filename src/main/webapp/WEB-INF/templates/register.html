@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>账号注册页面</title>
+</head>
+<body>
+<style>
+  body {
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    margin: 100px auto;
+    width: 400px;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  h2 {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+  }
+
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #3e8e41;
+  }
+
+</style>
+</body>
+<div class="container">
+  <form th:action="@{/register}" method="post" id="reg_form">
+    用户名:<input type="text" name="username" id="username"><br>
+      <span id="name_err" class="text_error" style="display:none;color:red">用户名已经存在，请重新填写！</span>
+      <span id="empty_error" class="text_error" style="display:none;color:red">用户名不能为空！</span>
+    密码:<input type="password" name="password" id="password"><br>
+      <span id="empty_error1" class="text_error" style="display:none;color:red">密码不能为空！</span>
+      确认密码:<input type="password" name="password1" id="password1"><br>
+    <input type="submit" value="注册">
+    <a th:href="@{/toLoginPage}">已经注册？点击登录</a>
+  </form>
+</div>
+<input type="hidden" th:value="${list}" id="list">
+<input type="hidden" th:value="${exitUser}" id="exit">
+<script>
+    var usernameInput=document.getElementById("username");
+
+    var list=document.getElementById("list").value;
+
+    usernameInput.onblur=checkUserName;
+    function checkUserName() {
+        var InputName=document.getElementById("username").value;
+        var flag1=1;
+        var flag2=1;
+        if(InputName==''){
+            flag1=0;
+
+            document.getElementById("empty_error").style.display='';
+            return false;
+        }else {
+            flag1=1;
+            document.getElementById("empty_error").style.display='none';
+        }
+        if(list.includes(InputName)){
+            flag2=0;
+            document.getElementById("name_err").style.display='';
+          return false;
+        }else {
+            flag2=1;
+            document.getElementById("name_err").style.display='none';
+        }
+        // alert("flag1:"+flag1+"flag2"+flag2+"flag1和flag2："+flag1*flag2);
+        return flag1*flag2;
+    }
+    var passwordInput=document.getElementById("password");
+    passwordInput.onblur=checkPassword;
+    function checkPassword(){
+        var InputPassword=document.getElementById("password").value;
+        var flag1=1;
+        var flag2=1;
+
+        if(InputPassword==''){
+            flag1=0;
+
+            document.getElementById("empty_error1").style.display='';
+        }else {
+            flag1=1;
+            document.getElementById("empty_error1").style.display='none';
+        }
+        return flag1;
+    }
+
+    var regForm=document.getElementById("reg_form");
+    regForm.onsubmit=checkSubmit;
+
+            function checkSubmit() {
+        var InputPassword1=document.getElementById("password1").value;
+        var InputPassword=document.getElementById("password").value;
+        var flag3=1;
+        if(InputPassword1!=InputPassword){
+            flag3=0;
+            alert("两次输入的密码不同！")
+        }
+        var flag= checkPassword()&&checkUserName();
+        if(flag*flag3==false){
+            alert("输入的数据有误，请检查数据！")
+        }
+        else {
+
+            alert("注册成功！您的用户名是"+usernameInput.value);
+        }
+
+        if(flag*flag3!=0){
+          return true;
+        }
+        else {
+          return false;
+        }
+    }
+
+
+
+</script>
+</html>

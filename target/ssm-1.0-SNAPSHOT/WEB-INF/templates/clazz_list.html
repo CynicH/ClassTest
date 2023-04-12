@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>课程信息</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<table>
+  <tr>
+    <th>课程列表</th>
+
+  </tr>
+  <tr>
+    <th>名称</th>
+    <th>课时</th>
+    <th>学院</th>
+  </tr>
+  <tr th:each="clazz:${list}">
+    <td th:text="${clazz.name}"></td>
+    <td th:text="${clazz.hours}"></td>
+    <td th:text="${clazz.dept}"></td>
+  </tr>
+</table>
+</body>
+</html>

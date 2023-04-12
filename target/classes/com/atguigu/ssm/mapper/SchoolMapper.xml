@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.ssm.mapper.SchoolMapper">
+<!--  List<c_course> CheckCourseBySdept(@Param("id") Integer id);-->
+    <resultMap id="empByDeptId" type="c_course">
+        <!--        ofType:设置集合类型中存储的数据的类型-->
+
+            <id column="id" property="id"></id>
+            <result column="name" property="name"></result>
+            <result column="hours" property="hours"></result>
+            <result column="sid" property="school"></result>
+    </resultMap>
+    <select id="CheckCourseBySdept" resultMap="empByDeptId">
+        select s_student.*,s_school.*
+        from     s_school , s_student
+        where s_student.sid =s_school.id
+        and s_school.schoolname=#{name}
+    </select>
+<!--    List<s_school> ShowAllDept();-->
+    <resultMap id="coursesById" type="s_school">
+        <!--        ofType:设置集合类型中存储的数据的类型-->
+        <id column="id" property="sid"></id>
+        <result column="schoolname" property="schoolName"></result>
+        <collection  property="courses" ofType="com.atguigu.ssm.pojo.c_course">
+            <id column="id" property="id"></id>
+            <result column="name" property="name"></result>
+            <result column="hours" property="hours"></result>
+            <result column="sid" property="school"></result>
+        </collection>
+    </resultMap>
+<!--    一定要注意表格中不能出现相同名字的主键！否则查询会出错，只能查到一个-->
+    <select id="ShowAllDept" resultMap="coursesById">
+        select s_school.id as schoolid,s_school.schoolname,s_student.*
+        from s_school left join s_student
+on s_school.id=s_student.sid
+;
+    </select>
+</mapper>
